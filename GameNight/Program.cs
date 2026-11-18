@@ -9,6 +9,8 @@
 */
 
 // Sets constant variables to outside files and also set up MAX_POINTS to 20 
+using System.Drawing;
+
 const string PLAYERS_FILE = "players.txt";
 const string POINTS_FILE = "points.txt";
 const string HISTORY_FILE = "history.txt";
@@ -32,4 +34,31 @@ int i;
 for(i =0; i <= players.Length-1; i++)
 {
     Console.WriteLine ($"{players[i].PadRight(11)}{pointsPerPerson[i]}");
+}
+
+// using the method LeaderIndex to get the index of the Leader before setting it as a variable and using it as a indes value to print the game and score of 1st place
+int leaderOfGame= LeaderIndex(pointsPerPerson);
+Console.WriteLine($"Leader: {players[leaderOfGame]} With {pointsPerPerson[leaderOfGame]}");
+
+
+//this method give the index value of the highest score
+static int LeaderIndex(string[] points)
+{
+    //set variables to 0
+    int leader = 0;
+    int i =0;
+
+    //This loop runs though each value in the array 
+    for (i=0; i<= points.Length-1; i++)
+    {
+
+        //compares the index value to the leader variable if higher the leader value is updated to show index value 
+        if(Convert.ToInt32(points[i])> Convert.ToInt32(points[leader]))
+        {
+            leader = i;
+        }
+    }
+
+    //returns the leader value
+    return leader;
 }
