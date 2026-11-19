@@ -9,7 +9,6 @@
 */
 
 // Sets constant variables to outside files and also set up MAX_POINTS to 20 
-using System.Drawing;
 
 const string PLAYERS_FILE = "players.txt";
 const string POINTS_FILE = "points.txt";
@@ -38,15 +37,18 @@ for(i =0; i <= players.Length-1; i++)
 
 // using the method LeaderIndex to get the index of the Leader before setting it as a variable and using it as a indes value to print the game and score of 1st place
 int leaderOfGame= LeaderIndex(pointsPerPerson);
-Console.WriteLine($"Leader: {players[leaderOfGame]} With {pointsPerPerson[leaderOfGame]}");
+Console.WriteLine($"Leader: {players[leaderOfGame]} with {pointsPerPerson[leaderOfGame]}");
 
+//sets the totalNumber variable to the output of the TotalPoints method and prints it to console with lable
+int totalNumber =TotalPoints(pointsPerPerson);
+Console.WriteLine($"Season total: {totalNumber}");
 
 //this method give the index value of the highest score
 static int LeaderIndex(string[] points)
 {
-    //set variables to 0
+    //set variables up to be used later
     int leader = 0;
-    int i =0;
+    int i;
 
     //This loop runs though each value in the array 
     for (i=0; i<= points.Length-1; i++)
@@ -61,4 +63,20 @@ static int LeaderIndex(string[] points)
 
     //returns the leader value
     return leader;
+}
+
+// This method adds up all the points to get a total
+static int TotalPoints(string[] points)
+{
+    // set variable up to be used later
+    int total = 0;
+
+    //This foreach loop take the array of points and runs through all of them to be added up and put in a total variable
+    foreach (string point in points)
+    {
+        total += Convert.ToInt32(point);
+    }
+
+    // returns the total value
+    return total;
 }
