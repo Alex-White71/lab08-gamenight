@@ -80,3 +80,38 @@ static int TotalPoints(string[] points)
     // returns the total value
     return total;
 }
+
+// set variables up to be used later
+int winningScore =0;
+int winner =0; 
+int gameScore;
+
+Console.WriteLine();
+//Runs through each player until all players have a score
+for (i=0; i <= players.Length-1; i++){
+
+        Console.Write($"Points tonight for {players[i]}: ");
+        gameScore = Convert.ToInt32(Console.ReadLine());
+    
+        //Forces the user to enter a valid score for the game 
+        while (gameScore < 0 || gameScore > MAX_POINTS)
+    {
+        Console.WriteLine("Points must be from 0 to 20.");
+        Console.Write($"Points tonight for {players[i]}: ");
+        gameScore = Convert.ToInt32(Console.ReadLine());
+    }
+
+    //Updates the winningScore and winner if the gameScore is greater than the winningScore
+        if(gameScore > winningScore)
+    {
+        winningScore = gameScore;
+        winner = i;
+    }
+
+    // adds gameScore to pointsPerPerson as number before turning it back to a string 
+    int season = Convert.ToInt32(pointsPerPerson[i]) + gameScore;
+    pointsPerPerson[i] = season.ToString();
+ }
+ //Print winning message and writes the new score to the points.txt file
+ Console.WriteLine($"Tonight's winner: {players[winner]} with {winningScore}");
+ File.WriteAllLines(POINTS_FILE, pointsPerPerson);
