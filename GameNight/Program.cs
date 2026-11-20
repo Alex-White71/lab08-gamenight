@@ -2,7 +2,7 @@
 * Name: Alex White
 * Course: CSCI 1250, Section 002
 * Assignment: Lab 08, Game Night
-* Date: November 18, 2026
+* Date: November 20, 2026
 * Description: Keeps a game night leaderboard in three text files. Shows the
 * season so far, records tonight's points, saves the new totals,
 * and adds tonight's result to a history that grows every week.
@@ -20,9 +20,36 @@ string projectFolder = Path.GetFullPath(
 Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 Directory.SetCurrentDirectory(projectFolder);
 
-//Reads all lines from players file and the points file
+//Reads all lines from players file, history file, and the points file
 string [] players = File.ReadAllLines(PLAYERS_FILE);
 string [] pointsPerPerson = File.ReadAllLines(POINTS_FILE);
+string [] night = File.ReadAllLines(HISTORY_FILE);
+
+//print header and get a variable for the night number
+Console.WriteLine("=== GAME NIGHT LEADERBOARD ===");
+int nightNum = night.Length+1;
+
+//runs for the first night and prints info for the first night
+if (nightNum == 1){
+    Console.WriteLine("No nights played yet.");
+    Console.WriteLine("Tonight is Night 1.");
+    Console.WriteLine();
+}
+
+//prints the info for the 2nd night onwards
+else if (nightNum > 1)
+{
+   Console.WriteLine($"Night played {nightNum-1}");
+
+   //This for loop print all info for won the last few nights ends with the previous night
+   for (int k =0; k <= night.Length-1; k++)
+    {
+        Console.WriteLine($"  {night[k]}");
+    }
+
+    Console.WriteLine($"Tonight is Night {nightNum}");
+    Console.WriteLine();
+}
 
 // Created headers 
 Console.Write("PLAYER");
@@ -42,6 +69,49 @@ Console.WriteLine($"Leader: {players[leaderOfGame]} with {pointsPerPerson[leader
 //sets the totalNumber variable to the output of the TotalPoints method and prints it to console with lable
 int totalNumber =TotalPoints(pointsPerPerson);
 Console.WriteLine($"Season total: {totalNumber}");
+
+// set variables up to be used later
+int winningScore =0;
+int winner =0; 
+int gameScore;
+
+Console.WriteLine();
+//Runs through each player until all players have a score
+for (i=0; i <= players.Length-1; i++){
+
+        Console.Write($"Points tonight for {players[i]}: ");
+        gameScore = Convert.ToInt32(Console.ReadLine());
+    
+        //Forces the user to enter a valid score for the game 
+        while (gameScore < 0 || gameScore > MAX_POINTS)
+    {
+        Console.WriteLine("Points must be from 0 to 20.");
+        Console.Write($"Points tonight for {players[i]}: ");
+        gameScore = Convert.ToInt32(Console.ReadLine());
+    }
+
+    //Updates the winningScore and winner if the gameScore is greater than the winningScore
+        if(gameScore > winningScore)
+    {
+        winningScore = gameScore;
+        winner = i;
+    }
+
+    // adds gameScore to pointsPerPerson as number before turning it back to a string 
+    int season = Convert.ToInt32(pointsPerPerson[i]) + gameScore;
+    pointsPerPerson[i] = season.ToString();
+ }
+//Print winning message and writes the new score to the points.txt file
+Console.WriteLine($"Tonight's winner: {players[winner]} with {winningScore}");
+Console.WriteLine();
+File.WriteAllLines(POINTS_FILE, pointsPerPerson);
+
+//prints confirmation messages to the screen and add tonight entry to the history.txt file
+Console.WriteLine("Saved points.txt.");
+string[] entry = { HistoryEntry(nightNum, players[winner], winningScore) };
+File.AppendAllLines(HISTORY_FILE, entry);
+Console.WriteLine($"Added to history.txt: {entry[0]}");
+
 
 //this method give the index value of the highest score
 static int LeaderIndex(string[] points)
@@ -81,37 +151,9 @@ static int TotalPoints(string[] points)
     return total;
 }
 
-// set variables up to be used later
-int winningScore =0;
-int winner =0; 
-int gameScore;
-
-Console.WriteLine();
-//Runs through each player until all players have a score
-for (i=0; i <= players.Length-1; i++){
-
-        Console.Write($"Points tonight for {players[i]}: ");
-        gameScore = Convert.ToInt32(Console.ReadLine());
-    
-        //Forces the user to enter a valid score for the game 
-        while (gameScore < 0 || gameScore > MAX_POINTS)
-    {
-        Console.WriteLine("Points must be from 0 to 20.");
-        Console.Write($"Points tonight for {players[i]}: ");
-        gameScore = Convert.ToInt32(Console.ReadLine());
-    }
-
-    //Updates the winningScore and winner if the gameScore is greater than the winningScore
-        if(gameScore > winningScore)
-    {
-        winningScore = gameScore;
-        winner = i;
-    }
-
-    // adds gameScore to pointsPerPerson as number before turning it back to a string 
-    int season = Convert.ToInt32(pointsPerPerson[i]) + gameScore;
-    pointsPerPerson[i] = season.ToString();
- }
- //Print winning message and writes the new score to the points.txt file
- Console.WriteLine($"Tonight's winner: {players[winner]} with {winningScore}");
- File.WriteAllLines(POINTS_FILE, pointsPerPerson);
+// This method puts together a entry for the history file
+static string HistoryEntry(int night, string winner, int points)
+{
+    string historyForNight = $"Night {night}: {winner} won with {points} Points";
+    return historyForNight;
+}
